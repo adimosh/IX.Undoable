@@ -15,7 +15,7 @@ namespace IX.Undoable
 		/// <remarks>
 		/// <para>If the object is captured, the method will call the capturing parent's Undo method, which can bubble down to
 		/// the last instance of an undo-/redo-capable object.</para>
-		/// <para>If that is the case, the capturing object is solely responsible for ensurig that the inner state of the whole
+		/// <para>If that is the case, the capturing object is solely responsible for ensuring that the inner state of the whole
 		/// system is correct. Implementing classes should not expect this method to also handle state.</para>
 		/// <para>If the object is released, it is expected that this method once again starts ensuring state when called.</para>
 		/// </remarks>
@@ -27,7 +27,7 @@ namespace IX.Undoable
 		/// <remarks>
 		/// <para>If the object is captured, the method will call the capturing parent's Redo method, which can bubble down to
 		/// the last instance of an undo-/redo-capable object.</para>
-		/// <para>If that is the case, the capturing object is solely responsible for ensurig that the inner state of the whole
+		/// <para>If that is the case, the capturing object is solely responsible for ensuring that the inner state of the whole
 		/// system is correct. Implementing classes should not expect this method to also handle state.</para>
 		/// <para>If the object is released, it is expected that this method once again starts ensuring state when called.</para>
 		/// </remarks>
