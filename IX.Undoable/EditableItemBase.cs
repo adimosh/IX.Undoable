@@ -206,6 +206,11 @@ namespace IX.Undoable
                 throw new ItemNotInEditModeException();
             }
 
+            if (!equalsFunction(this.data, this.comparisonData))
+            {
+                CommitEditInternal();
+            }
+
             this.isInEditMode = false;
 
             RaisePropertyChanged(nameof(IsInEditMode));
@@ -330,19 +335,40 @@ namespace IX.Undoable
         /// </summary>
         /// <typeparam name="TSubItem">The type of the sub item.</typeparam>
         /// <param name="item">The item.</param>
-        /// <remarks>
-        /// <para>
-        /// This method is intended to capture only objects that are directly sub-objects that can have their own internal state and undo/redo
+        /// <exception cref="System.ArgumentNullException">item</exception>
+        /// <remarks>This method is intended to capture only objects that are directly sub-objects that can have their own internal state and undo/redo
         /// capabilities and are also transactional in nature when being edited. Using this method on any other object may yield unwanted
-        /// commits.
-        /// </para>
-        /// </remarks>
+        /// commits.</remarks>
         protected void CaptureSubItemIntoPresentContext<TSubItem>(TSubItem item)
             where TSubItem : IUndoableItem, ITransactionEditableItem
         {
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
+
             item.CaptureIntoUndoContext(this);
 
             item.EditCommitted += this.Item_EditCommitted;
+        }
+
+        /// <summary>
+        /// Releases the sub item from present context.
+        /// </summary>
+        /// <typeparam name="TSubItem">The type of the t sub item.</typeparam>
+        /// <param name="item">The item.</param>
+        /// <exception cref="System.ArgumentNullException">item</exception>
+        protected void ReleaseSubItemFromPresentContext<TSubItem>(TSubItem item)
+            where TSubItem : IUndoableItem, ITransactionEditableItem
+        {
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
+
+            item.EditCommitted -= this.Item_EditCommitted;
+
+            item.ReleaseFromUndoContext();
         }
 
         /// <summary>

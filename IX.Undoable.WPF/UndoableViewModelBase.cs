@@ -8,7 +8,7 @@ using System.Windows.Threading;
 
 namespace IX.Undoable.WPF
 {
-    public abstract class UndoableViewModelBase<TItem> : EditableItemBase<TItem>, INotifyPropertyChanged
+    public abstract class UndoableViewModelBase<TItem> : EditableItemBase<TItem>, INotifyPropertyChanged, IEditableObject
     {
         protected UndoableViewModelBase(TItem data)
             : base(data)
