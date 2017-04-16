@@ -1,6 +1,7 @@
 ﻿using IX.Undoable.Aides;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace IX.Undoable
 {
@@ -88,10 +89,17 @@ namespace IX.Undoable
             this.cloningFunction = cloningFunction ?? throw new ArgumentNullException(nameof(cloningFunction));
             this.equalsFunction = equalsFunction ?? throw new ArgumentNullException(nameof(equalsFunction));
 
+            if (typeof(TItem).GetTypeInfo().IsClass && data == null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+            else
+            {
+                this.data = data;
+            }
+
             this.undoStack = new Stack<TItem>();
             this.redoStack = new Stack<TItem>();
-
-            this.data = data;
         }
 
         /// <summary>
@@ -206,7 +214,7 @@ namespace IX.Undoable
                 throw new ItemNotInEditModeException();
             }
 
-            if (!equalsFunction(this.data, this.comparisonData))
+            if (!this.equalsFunction(this.data, this.comparisonData))
             {
                 CommitEditInternal();
             }
