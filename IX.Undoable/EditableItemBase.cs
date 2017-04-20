@@ -1,7 +1,7 @@
-﻿using IX.Undoable.Aides;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Reflection;
+using IX.System.Collections.Generic;
+using IX.Undoable.Aides;
 
 namespace IX.Undoable
 {
@@ -26,12 +26,12 @@ namespace IX.Undoable
         /// <summary>
         /// The undo stack
         /// </summary>
-        private Stack<TItem> undoStack;
+        private PushDownStack<TItem> undoStack;
 
         /// <summary>
         /// The redo stack
         /// </summary>
-        private Stack<TItem> redoStack;
+        private PushDownStack<TItem> redoStack;
 
         /// <summary>
         /// The parent context
@@ -80,7 +80,7 @@ namespace IX.Undoable
         /// <param name="data">The data.</param>
         /// <param name="cloningFunction">The cloning function.</param>
         /// <param name="equalsFunction">The equals function.</param>
-        /// <exception cref="System.ArgumentNullException"><paramref name="cloningFunction" />
+        /// <exception cref="ArgumentNullException"><paramref name="cloningFunction" />
         /// or
         /// <paramref name="equalsFunction" />
         /// is <c>null</c> (<c>Nothing</c> in Visual Basic).</exception>
@@ -98,8 +98,8 @@ namespace IX.Undoable
                 this.data = data;
             }
 
-            this.undoStack = new Stack<TItem>();
-            this.redoStack = new Stack<TItem>();
+            this.undoStack = new PushDownStack<TItem>(0);
+            this.redoStack = new PushDownStack<TItem>(0);
         }
 
         /// <summary>
@@ -124,6 +124,9 @@ namespace IX.Undoable
                     if (this.historyLevels != value)
                     {
                         this.historyLevels = value;
+
+                        this.undoStack.Limit = this.historyLevels;
+                        this.redoStack.Limit = this.historyLevels;
 
                         RaisePropertyChanged(nameof(HistoryLevels));
                     }
@@ -229,7 +232,7 @@ namespace IX.Undoable
         /// can be coordinated across a larger scope.
         /// </summary>
         /// <param name="parent">The parent undo and redo context.</param>
-        /// <exception cref="System.ArgumentNullException"><paramref name="parent" /> is <c>null</c> (<c>Nothing</c> in Visual Basic).</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="parent" /> is <c>null</c> (<c>Nothing</c> in Visual Basic).</exception>
         /// <exception cref="IX.Undoable.ItemIsInEditModeException">The item is in edit mode, and this operation cannot be performed at this time.</exception>
         /// <remarks>This method is meant to be used by containers, and should not be called directly.</remarks>
         public void CaptureIntoUndoContext(IUndoableItem parent)
@@ -343,7 +346,7 @@ namespace IX.Undoable
         /// </summary>
         /// <typeparam name="TSubItem">The type of the sub item.</typeparam>
         /// <param name="item">The item.</param>
-        /// <exception cref="System.ArgumentNullException">item</exception>
+        /// <exception cref="ArgumentNullException">item</exception>
         /// <remarks>This method is intended to capture only objects that are directly sub-objects that can have their own internal state and undo/redo
         /// capabilities and are also transactional in nature when being edited. Using this method on any other object may yield unwanted
         /// commits.</remarks>
@@ -365,7 +368,7 @@ namespace IX.Undoable
         /// </summary>
         /// <typeparam name="TSubItem">The type of the t sub item.</typeparam>
         /// <param name="item">The item.</param>
-        /// <exception cref="System.ArgumentNullException">item</exception>
+        /// <exception cref="ArgumentNullException">item</exception>
         protected void ReleaseSubItemFromPresentContext<TSubItem>(TSubItem item)
             where TSubItem : IUndoableItem, ITransactionEditableItem
         {
@@ -387,7 +390,7 @@ namespace IX.Undoable
         private void Item_EditCommitted(object sender, EditCommittedEventArgs e) => CommitEditInternal();
 
         /// <summary>
-        /// When implemented in a child class, raises the property changed event of <see cref="INotifyPropertyChanged" />.
+        /// When implemented in a child class, raises the property changed event of <see cref="T:System.ComponentModel.INotifyPropertyChanged" />.
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
         protected virtual void RaisePropertyChanged(string propertyName)

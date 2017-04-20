@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace IX.Undoable
 {
+    /// <summary>
+    /// Event arguments for edit committed.
+    /// </summary>
     public class EditCommittedEventArgs : EventArgs
     {
     }
