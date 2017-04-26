@@ -33,6 +33,8 @@ namespace IX.Undoable
         /// </summary>
         private PushDownStack<TItem> redoStack;
 
+        private global::System.Collections.Generic.List<StateChange> stateChanges;
+
         /// <summary>
         /// The parent context
         /// </summary>
@@ -100,6 +102,8 @@ namespace IX.Undoable
 
             this.undoStack = new PushDownStack<TItem>(0);
             this.redoStack = new PushDownStack<TItem>(0);
+
+            this.stateChanges = new global::System.Collections.Generic.List<StateChange>();
         }
 
         /// <summary>
@@ -186,6 +190,8 @@ namespace IX.Undoable
                 throw new ItemNotInEditModeException();
             }
 
+            this.stateChanges.Clear();
+
             if (!this.equalsFunction(this.data, this.comparisonData))
             {
                 SetChangedValues(this.data, this.comparisonData);
@@ -203,7 +209,9 @@ namespace IX.Undoable
                 throw new ItemNotInEditModeException();
             }
 
-            CommitEditInternal();
+            CommitEditInternal(this.stateChanges.ToArray());
+
+            this.stateChanges.Clear();
         }
 
         /// <summary>
@@ -219,8 +227,10 @@ namespace IX.Undoable
 
             if (!this.equalsFunction(this.data, this.comparisonData))
             {
-                CommitEditInternal();
+                CommitEditInternal(this.stateChanges.ToArray());
             }
+
+            this.stateChanges.Clear();
 
             this.isInEditMode = false;
 
@@ -387,7 +397,12 @@ namespace IX.Undoable
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EditCommittedEventArgs"/> instance containing the event data.</param>
-        private void Item_EditCommitted(object sender, EditCommittedEventArgs e) => CommitEditInternal();
+        private void Item_EditCommitted(object sender, EditCommittedEventArgs e)
+        {
+            this.stateChanges.Add(new SubItemStateChange { StateChanges = e.StateChanges, SubObject = sender });
+
+            this.CommitEditInternal(this.stateChanges.ToArray());
+        }
 
         /// <summary>
         /// When implemented in a child class, raises the property changed event of <see cref="T:System.ComponentModel.INotifyPropertyChanged" />.
@@ -396,6 +411,8 @@ namespace IX.Undoable
         protected virtual void RaisePropertyChanged(string propertyName)
         {
         }
+
+        protected void AdvertiseStateChange(StateChange stateChange) => this.stateChanges.Add(stateChange);
 
         /// <summary>
         /// Sets the changed values.
@@ -413,7 +430,7 @@ namespace IX.Undoable
         /// <summary>
         /// Commits the edit internal.
         /// </summary>
-        private void CommitEditInternal()
+        private void CommitEditInternal(StateChange[] stateChanges)
         {
             if (this.parentContext != null)
             {
@@ -426,7 +443,7 @@ namespace IX.Undoable
             RaisePropertyChanged(nameof(CanUndo));
             RaisePropertyChanged(nameof(CanRedo));
 
-            EditCommitted?.Invoke(this, new EditCommittedEventArgs());
+            EditCommitted?.Invoke(this, new EditCommittedEventArgs(stateChanges));
         }
     }
 }

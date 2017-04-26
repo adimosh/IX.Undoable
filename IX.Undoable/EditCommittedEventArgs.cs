@@ -7,5 +7,11 @@ namespace IX.Undoable
     /// </summary>
     public class EditCommittedEventArgs : EventArgs
     {
+        public EditCommittedEventArgs(StateChange[] stateChanges)
+        {
+            this.StateChanges = stateChanges;
+        }
+
+        public StateChange[] StateChanges { get; private set; }
     }
 }
