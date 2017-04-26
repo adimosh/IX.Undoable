@@ -24,13 +24,7 @@ build_script:
     dotnet build IX.Undoable.csproj -c Release
 
     cd..
-test_script:
-- cmd: >-
-    cd IX.Undoable.UnitTests
-
-    dotnet xunit
-
-    cd ..
+test: off
 deploy_script:
 - cmd: >-
     dotnet pack IX.Undoable\IX.Undoable.csproj -c Release --no-build
