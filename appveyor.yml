@@ -1,0 +1,38 @@
+version: 0.1.0.{build}
+skip_tags: true
+image: Visual Studio 2017
+clone_depth: 1
+environment:
+  NUGET_SECURE_TOKEN:
+    secure: eF0Mu+Ky+FtngFJN7u4unv9l2ebEvlvfim9hPpWkRAc=
+  nuget_user: adimosh@gmail.com
+  nuget_password:
+    secure: QzxGG+tm1H9IaA5tMZx2pA==
+install:
+- cmd: >-
+    appveyor DownloadFile https://dist.nuget.org/win-x86-commandline/v4.1.0/nuget.exe
+
+    nuget sources add -Name MyAccountFeed -Source https://ci.appveyor.com/nuget/adimosh-at-live-dot-com -UserName %nuget_user% -Password %nuget_password%
+
+    nuget restore
+build_script:
+- cmd: >-
+    cd IX.Undoable
+
+    dotnet csprojVersioning IX.Undoable.csproj %APPVEYOR_BUILD_VERSION%
+
+    dotnet build IX.Undoable.csproj -c Release
+
+    cd..
+test_script:
+- cmd: >-
+    cd IX.Undoable.UnitTests
+
+    dotnet xunit
+
+    cd ..
+deploy_script:
+- cmd: >-
+    dotnet pack IX.Undoable\IX.Undoable.csproj -c Release --no-build
+
+    nuget push IX.Undoable\bin\Release\IX.Undoable.%APPVEYOR_BUILD_VERSION%.nupkg -ApiKey %NUGET_SECURE_TOKEN% -Source https://ci.appveyor.com/nuget/adimosh-at-live-dot-com/api/v2/package
