@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using IX.System.Collections.Generic;
 
 namespace IX.Undoable
@@ -7,10 +6,9 @@ namespace IX.Undoable
     /// <summary>
     /// A base class for editable items that can be edited in a transactional-style pattern.
     /// </summary>
-    /// <typeparam name="TItem">The type of the item.</typeparam>
     /// <seealso cref="IX.Undoable.ITransactionEditableItem" />
     /// <seealso cref="IX.Undoable.IUndoableItem" />
-    public abstract class EditableItemBase<TItem> : ITransactionEditableItem, IUndoableItem
+    public abstract class EditableItemBase : ITransactionEditableItem, IUndoableItem
     {
         /// <summary>
         /// The value indicating whether the item is in edit mode
@@ -40,30 +38,15 @@ namespace IX.Undoable
         private IUndoableItem parentContext;
 
         /// <summary>
-        /// The data
-        /// </summary>
-        private TItem data;
-
-        /// <summary>
         /// Occurs when an edit on this item is committed.
         /// </summary>
         public event EventHandler<EditCommittedEventArgs> EditCommitted;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EditableItemBase{TItem}" /> class.
+        /// Initializes a new instance of the <see cref="EditableItemBase" /> class.
         /// </summary>
-        /// <param name="data">The data.</param>
-        protected EditableItemBase(TItem data)
+        protected EditableItemBase()
         {
-            if (typeof(TItem).GetTypeInfo().IsClass && data == null)
-            {
-                throw new ArgumentNullException(nameof(data));
-            }
-            else
-            {
-                this.data = data;
-            }
-
             this.undoStack = new PushDownStack<StateChange[]>(0);
             this.redoStack = new PushDownStack<StateChange[]>(0);
 
@@ -152,9 +135,12 @@ namespace IX.Undoable
                 throw new ItemNotInEditModeException();
             }
 
-            RevertChanges(this.stateChanges.ToArray());
+            if (this.stateChanges.Count > 0)
+            {
+                RevertChanges(this.stateChanges.ToArray());
 
-            this.stateChanges.Clear();
+                this.stateChanges.Clear();
+            }
         }
 
         /// <summary>
@@ -168,9 +154,12 @@ namespace IX.Undoable
                 throw new ItemNotInEditModeException();
             }
 
-            CommitEditInternal(this.stateChanges.ToArray());
+            if (this.stateChanges.Count > 0)
+            {
+                CommitEditInternal(this.stateChanges.ToArray());
 
-            this.stateChanges.Clear();
+                this.stateChanges.Clear();
+            }
         }
 
         /// <summary>
@@ -184,9 +173,12 @@ namespace IX.Undoable
                 throw new ItemNotInEditModeException();
             }
 
-            CommitEditInternal(this.stateChanges.ToArray());
+            if (this.stateChanges.Count > 0)
+            {
+                CommitEditInternal(this.stateChanges.ToArray());
 
-            this.stateChanges.Clear();
+                this.stateChanges.Clear();
+            }
 
             this.isInEditMode = false;
 
@@ -385,12 +377,6 @@ namespace IX.Undoable
         /// </summary>
         /// <param name="stateChanges">The state changes to execute.</param>
         protected abstract void DoChanges(StateChange[] stateChanges);
-
-        /// <summary>
-        /// Gets the data item.
-        /// </summary>
-        /// <value>The data item.</value>
-        protected TItem DataItem => this.data;
 
         /// <summary>
         /// Commits the edit internal.

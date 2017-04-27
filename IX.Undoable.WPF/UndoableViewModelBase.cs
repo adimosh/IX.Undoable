@@ -1,25 +1,36 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows.Threading;
 
 namespace IX.Undoable.WPF
 {
-    public abstract class UndoableViewModelBase<TItem> : EditableItemBase<TItem>, INotifyPropertyChanged, IEditableObject
+    /// <summary>
+    /// A base class for undo-able view models.
+    /// </summary>
+    public abstract class UndoableViewModelBase : EditableItemBase, INotifyPropertyChanged, IEditableObject
     {
-        protected UndoableViewModelBase(TItem data)
-            : base(data)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UndoableViewModelBase"/> class.
+        /// </summary>
+        protected UndoableViewModelBase()
         {
         }
 
-        protected UndoableViewModelBase(TItem data, Func<TItem, TItem> cloningFunction, Func<TItem, TItem, bool> equalsFunction)
-            : base(data)
-        {
-        }
-
+        /// <summary>
+        /// Triggered by a change in a property.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Raises the <see cref="PropertyChanged"/> event.
+        /// </summary>
+        /// <param name="propertyName">The name of the property that should trigger the event with.</param>
         protected override void RaisePropertyChanged(string propertyName)
         {
+            if (PropertyChanged == null)
+            {
+                return;
+            }
+
             if (Dispatcher.CurrentDispatcher == null)
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
