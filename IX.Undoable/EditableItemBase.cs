@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using IX.System.Collections.Generic;
-using IX.Undoable.Aides;
 
 namespace IX.Undoable
 {
@@ -26,12 +25,12 @@ namespace IX.Undoable
         /// <summary>
         /// The undo stack
         /// </summary>
-        private PushDownStack<TItem> undoStack;
+        private PushDownStack<StateChange[]> undoStack;
 
         /// <summary>
         /// The redo stack
         /// </summary>
-        private PushDownStack<TItem> redoStack;
+        private PushDownStack<StateChange[]> redoStack;
 
         private global::System.Collections.Generic.List<StateChange> stateChanges;
 
@@ -46,21 +45,6 @@ namespace IX.Undoable
         private TItem data;
 
         /// <summary>
-        /// The comparison data
-        /// </summary>
-        private TItem comparisonData;
-
-        /// <summary>
-        /// The cloning function
-        /// </summary>
-        private Func<TItem, TItem> cloningFunction;
-
-        /// <summary>
-        /// The equals function
-        /// </summary>
-        private Func<TItem, TItem, bool> equalsFunction;
-
-        /// <summary>
         /// Occurs when an edit on this item is committed.
         /// </summary>
         public event EventHandler<EditCommittedEventArgs> EditCommitted;
@@ -70,27 +54,7 @@ namespace IX.Undoable
         /// </summary>
         /// <param name="data">The data.</param>
         protected EditableItemBase(TItem data)
-            : this(data,
-                  ItemCloningAide.GenerateCloningFunction<TItem>(),
-                  ItemEqualityAide.GenerateEqualityFunction<TItem>())
         {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EditableItemBase{TItem}" /> class.
-        /// </summary>
-        /// <param name="data">The data.</param>
-        /// <param name="cloningFunction">The cloning function.</param>
-        /// <param name="equalsFunction">The equals function.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="cloningFunction" />
-        /// or
-        /// <paramref name="equalsFunction" />
-        /// is <c>null</c> (<c>Nothing</c> in Visual Basic).</exception>
-        protected EditableItemBase(TItem data, Func<TItem, TItem> cloningFunction, Func<TItem, TItem, bool> equalsFunction)
-        {
-            this.cloningFunction = cloningFunction ?? throw new ArgumentNullException(nameof(cloningFunction));
-            this.equalsFunction = equalsFunction ?? throw new ArgumentNullException(nameof(equalsFunction));
-
             if (typeof(TItem).GetTypeInfo().IsClass && data == null)
             {
                 throw new ArgumentNullException(nameof(data));
@@ -100,8 +64,8 @@ namespace IX.Undoable
                 this.data = data;
             }
 
-            this.undoStack = new PushDownStack<TItem>(0);
-            this.redoStack = new PushDownStack<TItem>(0);
+            this.undoStack = new PushDownStack<StateChange[]>(0);
+            this.redoStack = new PushDownStack<StateChange[]>(0);
 
             this.stateChanges = new global::System.Collections.Generic.List<StateChange>();
         }
@@ -174,8 +138,6 @@ namespace IX.Undoable
 
             this.isInEditMode = true;
 
-            this.comparisonData = this.cloningFunction(this.data);
-
             RaisePropertyChanged(nameof(IsInEditMode));
         }
 
@@ -190,12 +152,9 @@ namespace IX.Undoable
                 throw new ItemNotInEditModeException();
             }
 
-            this.stateChanges.Clear();
+            RevertChanges(this.stateChanges.ToArray());
 
-            if (!this.equalsFunction(this.data, this.comparisonData))
-            {
-                SetChangedValues(this.data, this.comparisonData);
-            }
+            this.stateChanges.Clear();
         }
 
         /// <summary>
@@ -225,10 +184,7 @@ namespace IX.Undoable
                 throw new ItemNotInEditModeException();
             }
 
-            if (!this.equalsFunction(this.data, this.comparisonData))
-            {
-                CommitEditInternal(this.stateChanges.ToArray());
-            }
+            CommitEditInternal(this.stateChanges.ToArray());
 
             this.stateChanges.Clear();
 
@@ -310,9 +266,9 @@ namespace IX.Undoable
                 return;
             }
 
-            TItem undoData = this.undoStack.Pop();
-            this.redoStack.Push(this.cloningFunction(this.data));
-            SetChangedValues(this.data, undoData);
+            StateChange[] undoData = this.undoStack.Pop();
+            this.redoStack.Push(undoData);
+            RevertChanges(undoData);
 
             RaisePropertyChanged(nameof(CanUndo));
             RaisePropertyChanged(nameof(CanRedo));
@@ -343,9 +299,9 @@ namespace IX.Undoable
                 return;
             }
 
-            TItem redoData = this.redoStack.Pop();
-            this.undoStack.Push(this.cloningFunction(this.data));
-            SetChangedValues(this.data, redoData);
+            StateChange[] redoData = this.redoStack.Pop();
+            this.undoStack.Push(redoData);
+            DoChanges(redoData);
 
             RaisePropertyChanged(nameof(CanUndo));
             RaisePropertyChanged(nameof(CanRedo));
@@ -412,14 +368,23 @@ namespace IX.Undoable
         {
         }
 
+        /// <summary>
+        /// Can be called to advertise a change of state in an implementing class.
+        /// </summary>
+        /// <param name="stateChange">The state change to advertise.</param>
         protected void AdvertiseStateChange(StateChange stateChange) => this.stateChanges.Add(stateChange);
 
         /// <summary>
-        /// Sets the changed values.
+        /// Called when a list of state changes are cancelled and must be reverted.
         /// </summary>
-        /// <param name="currentItem">The current item.</param>
-        /// <param name="originalData">The original data.</param>
-        protected abstract void SetChangedValues(TItem currentItem, TItem originalData);
+        /// <param name="stateChanges">The state changes to revert.</param>
+        protected abstract void RevertChanges(StateChange[] stateChanges);
+
+        /// <summary>
+        /// Called when a list of state changes must be executed.
+        /// </summary>
+        /// <param name="stateChanges">The state changes to execute.</param>
+        protected abstract void DoChanges(StateChange[] stateChanges);
 
         /// <summary>
         /// Gets the data item.
@@ -434,10 +399,9 @@ namespace IX.Undoable
         {
             if (this.parentContext != null)
             {
-                this.undoStack.Push(this.comparisonData);
+                this.undoStack.Push(stateChanges);
             }
 
-            this.comparisonData = this.cloningFunction(this.data);
             this.redoStack.Clear();
 
             RaisePropertyChanged(nameof(CanUndo));

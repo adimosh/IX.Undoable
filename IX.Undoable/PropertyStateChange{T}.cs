@@ -1,17 +1,11 @@
 ﻿namespace IX.Undoable
 {
     /// <summary>
-    /// A state change of a specific type.
+    /// A state change of a property of a specific type.
     /// </summary>
     /// <typeparam name="T">The type of object in the state change.</typeparam>
-    public class StateChange<T> : StateChange
+    public class StateChange<T> : PropertyStateChange
     {
-        /// <summary>
-        /// Gets or sets the name of the property.
-        /// </summary>
-        /// <value>The name of the property.</value>
-        public string PropertyName { get; set; }
-
         /// <summary>
         /// Gets or sets the old value.
         /// </summary>
