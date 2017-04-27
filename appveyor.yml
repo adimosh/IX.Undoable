@@ -24,9 +24,21 @@ build_script:
     dotnet build IX.Undoable.csproj -c Release
 
     cd..
+
+    cd IX.Undoable.WPF
+
+    dotnet csprojVersioning IX.Undoable.WPF.csproj %APPVEYOR_BUILD_VERSION%
+
+    dotnet build IX.Undoable.WPF.csproj -c Release
+
+    cd..
 test: off
 deploy_script:
 - cmd: >-
     dotnet pack IX.Undoable\IX.Undoable.csproj -c Release --no-build
 
     nuget push IX.Undoable\bin\Release\IX.Undoable.%APPVEYOR_BUILD_VERSION%.nupkg -ApiKey %NUGET_SECURE_TOKEN% -Source https://ci.appveyor.com/nuget/adimosh-at-live-dot-com/api/v2/package
+
+    dotnet pack IX.Undoable.WPF\IX.Undoable.WPF.csproj -c Release --no-build
+
+    nuget push IX.Undoable.WPF\bin\Release\IX.Undoable.WPF.%APPVEYOR_BUILD_VERSION%.nupkg -ApiKey %NUGET_SECURE_TOKEN% -Source https://ci.appveyor.com/nuget/adimosh-at-live-dot-com/api/v2/package
