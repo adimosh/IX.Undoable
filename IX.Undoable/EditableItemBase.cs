@@ -364,10 +364,20 @@ namespace IX.Undoable
         /// Can be called to advertise a change of state in an implementing class.
         /// </summary>
         /// <param name="stateChange">The state change to advertise.</param>
-        protected void AdvertiseStateChange(StateChange stateChange) => this.stateChanges.Add(stateChange);
+        protected void AdvertiseStateChange(StateChange stateChange)
+        {
+            if (this.isInEditMode)
+            {
+                this.stateChanges.Add(stateChange);
+            }
+            else
+            {
+                this.CommitEditInternal(new StateChange[1] { stateChange });
+            }
+        }
 
         /// <summary>
-        /// Called when a list of state changes are cancelled and must be reverted.
+        /// Called when a list of state changes are canceled and must be reverted.
         /// </summary>
         /// <param name="stateChanges">The state changes to revert.</param>
         protected abstract void RevertChanges(StateChange[] stateChanges);
@@ -379,8 +389,9 @@ namespace IX.Undoable
         protected abstract void DoChanges(StateChange[] stateChanges);
 
         /// <summary>
-        /// Commits the edit internal.
+        /// Commits the edit internally.
         /// </summary>
+        /// <param name="stateChanges">The state changes.</param>
         private void CommitEditInternal(StateChange[] stateChanges)
         {
             if (this.parentContext != null)
@@ -394,6 +405,48 @@ namespace IX.Undoable
             RaisePropertyChanged(nameof(CanRedo));
 
             EditCommitted?.Invoke(this, new EditCommittedEventArgs(stateChanges));
+        }
+
+        /// <summary>
+        /// Has the state changes received undone from the object.
+        /// </summary>
+        /// <param name="stateChanges">The state changes to undo.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="stateChanges"/> is <c>null</c> (<c>Nothing</c> in Visual Basic).</exception>
+        /// <exception cref="ItemNotCapturedIntoUndoContextException">The item is not captured into an undo/redo context, and this operation is illegal.</exception>
+        public void UndoStateChanges(StateChange[] stateChanges)
+        {
+            if (stateChanges == null)
+            {
+                throw new ArgumentNullException(nameof(stateChanges));
+            }
+
+            if (!this.IsCapturedInUndoContext)
+            {
+                throw new ItemNotCapturedIntoUndoContextException();
+            }
+
+            this.RevertChanges(stateChanges);
+        }
+
+        /// <summary>
+        /// Has the state changes received redone into the object.
+        /// </summary>
+        /// <param name="stateChanges">The state changes to redo.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="stateChanges"/> is <c>null</c> (<c>Nothing</c> in Visual Basic).</exception>
+        /// <exception cref="ItemNotCapturedIntoUndoContextException">The item is not captured into an undo/redo context, and this operation is illegal.</exception>
+        public void RedoStateChanges(StateChange[] stateChanges)
+        {
+            if (stateChanges == null)
+            {
+                throw new ArgumentNullException(nameof(stateChanges));
+            }
+
+            if (!this.IsCapturedInUndoContext)
+            {
+                throw new ItemNotCapturedIntoUndoContextException();
+            }
+
+            this.DoChanges(stateChanges);
         }
     }
 }

@@ -123,6 +123,9 @@
   <data name="ItemIsInEditModeExceptionDefaultMessage" xml:space="preserve">
     <value>The operation could not be completed as the current item is in edit mode.</value>
   </data>
+  <data name="ItemNotCapturedIntoUndoContextException" xml:space="preserve">
+    <value>The operation could not be completed as the current item is not trapped into an existing undo context.</value>
+  </data>
   <data name="ItemNotInEditModeExceptionDefaultMessage" xml:space="preserve">
     <value>The operation could not be completed as the current item is not in edit mode.</value>
   </data>

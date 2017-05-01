@@ -30,6 +30,26 @@
         void Redo();
 
         /// <summary>
+        /// When implemented, has the state changes received undone from the object.
+        /// </summary>
+        /// <param name="stateChanges">The state changes to redo.</param>
+        /// <remarks>
+        /// <para>This method is to only be used by a capturing undo/redo context. If the implementer is not captured, an
+        /// <see cref="ItemNotCapturedIntoUndoContextException"/> should be thrown.</para>
+        /// </remarks>
+        void UndoStateChanges(StateChange[] stateChanges);
+
+        /// <summary>
+        /// When implemented, has the state changes received redone into the object.
+        /// </summary>
+        /// <param name="stateChanges">The state changes to redo.</param>
+        /// <remarks>
+        /// <para>This method is to only be used by a capturing undo/redo context. If the implementer is not captured, an
+        /// <see cref="ItemNotCapturedIntoUndoContextException"/> should be thrown.</para>
+        /// </remarks>
+        void RedoStateChanges(StateChange[] stateChanges);
+
+        /// <summary>
         /// Allows the implementer to be captured by a containing undo-/redo-capable object so that undo and redo operations
         /// can be coordinated across a larger scope.
         /// </summary>
