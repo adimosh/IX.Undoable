@@ -27,11 +27,16 @@
     <DefineConstants>RELEASE</DefineConstants>
     <DocumentationFile>bin\Release\netstandard1.0\IX.Undoable.xml</DocumentationFile>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <AdditionalFiles Include="stylecop.json" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="IX.Abstractions.Collections" Version="0.1.3.2" />
     <PackageReference Include="IX.StandardExtensions" Version="0.1.0.9" />
     <PackageReference Include="System.Collections" Version="4.3.0" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta001" Type="build" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

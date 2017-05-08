@@ -1,4 +1,8 @@
-﻿using System.ComponentModel;
+﻿// <copyright file="UndoableViewModelBase.cs" company="Adrian Mos">
+// Copyright (c) Adrian Mos with all rights reserved.
+// </copyright>
+
+using System.ComponentModel;
 using System.Windows.Threading;
 
 namespace IX.Undoable.WPF
@@ -26,19 +30,19 @@ namespace IX.Undoable.WPF
         /// <param name="propertyName">The name of the property that should trigger the event with.</param>
         protected override void RaisePropertyChanged(string propertyName)
         {
-            if (PropertyChanged == null)
+            if (this.PropertyChanged == null)
             {
                 return;
             }
 
             if (Dispatcher.CurrentDispatcher == null)
             {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
             else
             {
                 Dispatcher.CurrentDispatcher.InvokeAsync(
-                    () => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)),
+                    () => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)),
                     DispatcherPriority.ApplicationIdle);
             }
         }

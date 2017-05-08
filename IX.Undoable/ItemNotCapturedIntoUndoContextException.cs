@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="ItemNotCapturedIntoUndoContextException.cs" company="Adrian Mos">
+// Copyright (c) Adrian Mos with all rights reserved.
+// </copyright>
+
+using System;
 
 namespace IX.Undoable
 {
@@ -14,7 +18,8 @@ namespace IX.Undoable
         /// </summary>
         public ItemNotCapturedIntoUndoContextException()
             : base(Resources.ItemNotCapturedIntoUndoContextException)
-        { }
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ItemNotCapturedIntoUndoContextException"/> class.
@@ -22,7 +27,8 @@ namespace IX.Undoable
         /// <param name="message">The custom message to display.</param>
         public ItemNotCapturedIntoUndoContextException(string message)
             : base(message)
-        { }
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ItemNotCapturedIntoUndoContextException"/> class.
@@ -30,7 +36,8 @@ namespace IX.Undoable
         /// <param name="innerException">The inner exception that caused this exception.</param>
         public ItemNotCapturedIntoUndoContextException(Exception innerException)
             : base(Resources.ItemNotCapturedIntoUndoContextException, innerException)
-        { }
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ItemNotCapturedIntoUndoContextException"/> class.
@@ -39,6 +46,7 @@ namespace IX.Undoable
         /// <param name="innerException">The inner exception that caused this exception.</param>
         public ItemNotCapturedIntoUndoContextException(string message, Exception innerException)
             : base(message, innerException)
-        { }
+        {
+        }
     }
 }

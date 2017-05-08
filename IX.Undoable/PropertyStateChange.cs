@@ -1,4 +1,8 @@
-﻿namespace IX.Undoable
+﻿// <copyright file="PropertyStateChange.cs" company="Adrian Mos">
+// Copyright (c) Adrian Mos with all rights reserved.
+// </copyright>
+
+namespace IX.Undoable
 {
     /// <summary>
     /// A state change of a property.

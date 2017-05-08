@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="EditableItemBase.cs" company="Adrian Mos">
+// Copyright (c) Adrian Mos with all rights reserved.
+// </copyright>
+
+using System;
 using IX.System.Collections.Generic;
 
 namespace IX.Undoable
@@ -38,11 +42,6 @@ namespace IX.Undoable
         private IUndoableItem parentContext;
 
         /// <summary>
-        /// Occurs when an edit on this item is committed.
-        /// </summary>
-        public event EventHandler<EditCommittedEventArgs> EditCommitted;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="EditableItemBase" /> class.
         /// </summary>
         protected EditableItemBase()
@@ -54,7 +53,12 @@ namespace IX.Undoable
         }
 
         /// <summary>
-        /// The number of levels to keep undo or redo information.
+        /// Occurs when an edit on this item is committed.
+        /// </summary>
+        public event EventHandler<EditCommittedEventArgs> EditCommitted;
+
+        /// <summary>
+        /// Gets or sets the number of levels to keep undo or redo information.
         /// </summary>
         /// <value>The history levels.</value>
         /// <remarks><para>If this value is set, for example, to 7, then the implementing object should allow the <see cref="Undo" /> method
@@ -63,7 +67,7 @@ namespace IX.Undoable
         /// <para>Any call beyond the limit imposed here should not fail, but it should also not change the state of the object.</para></remarks>
         public int HistoryLevels
         {
-            get => historyLevels;
+            get => this.historyLevels;
             set
             {
                 if (value < 0)
@@ -79,7 +83,7 @@ namespace IX.Undoable
                         this.undoStack.Limit = this.historyLevels;
                         this.redoStack.Limit = this.historyLevels;
 
-                        RaisePropertyChanged(nameof(HistoryLevels));
+                        this.RaisePropertyChanged(nameof(this.HistoryLevels));
                     }
                 }
             }
@@ -98,13 +102,13 @@ namespace IX.Undoable
         public bool IsCapturedInUndoContext => this.parentContext != null;
 
         /// <summary>
-        /// Gets whether or not an undo can be performed on this item.
+        /// Gets a value indicating whether or not an undo can be performed on this item.
         /// </summary>
         /// <value><c>true</c> if the call to the <see cref="Undo" /> method would result in a state change, <c>false</c> otherwise.</value>
         public bool CanUndo => this.IsCapturedInUndoContext || this.undoStack.Count > 0;
 
         /// <summary>
-        /// Gets whether or not a redo can be performed on this item.
+        /// Gets a value indicating whether or not a redo can be performed on this item.
         /// </summary>
         /// <value><c>true</c> if the call to the <see cref="Redo" /> method would result in a state change, <c>false</c> otherwise.</value>
         public bool CanRedo => this.IsCapturedInUndoContext || this.redoStack.Count > 0;
@@ -121,13 +125,13 @@ namespace IX.Undoable
 
             this.isInEditMode = true;
 
-            RaisePropertyChanged(nameof(IsInEditMode));
+            this.RaisePropertyChanged(nameof(this.IsInEditMode));
         }
 
         /// <summary>
         /// Discards all changes to the item, reloading the state at the last commit or at the beginning of the edit transaction, whichever occurred last.
         /// </summary>
-        /// <exception cref="IX.Undoable.ItemNotInEditModeException"></exception>
+        /// <exception cref="IX.Undoable.ItemNotInEditModeException">The item is not in edit mode.</exception>
         public void CancelEdit()
         {
             if (!this.isInEditMode)
@@ -137,7 +141,7 @@ namespace IX.Undoable
 
             if (this.stateChanges.Count > 0)
             {
-                RevertChanges(this.stateChanges.ToArray());
+                this.RevertChanges(this.stateChanges.ToArray());
 
                 this.stateChanges.Clear();
             }
@@ -146,7 +150,7 @@ namespace IX.Undoable
         /// <summary>
         /// Commits the changes to the item as they are, without ending the editing.
         /// </summary>
-        /// <exception cref="IX.Undoable.ItemNotInEditModeException"></exception>
+        /// <exception cref="IX.Undoable.ItemNotInEditModeException">The item is not in edit mode.</exception>
         public void CommitEdit()
         {
             if (!this.isInEditMode)
@@ -156,7 +160,7 @@ namespace IX.Undoable
 
             if (this.stateChanges.Count > 0)
             {
-                CommitEditInternal(this.stateChanges.ToArray());
+                this.CommitEditInternal(this.stateChanges.ToArray());
 
                 this.stateChanges.Clear();
             }
@@ -165,7 +169,7 @@ namespace IX.Undoable
         /// <summary>
         /// Ends the editing of an item.
         /// </summary>
-        /// <exception cref="IX.Undoable.ItemNotInEditModeException"></exception>
+        /// <exception cref="IX.Undoable.ItemNotInEditModeException">The item is not in edit mode.</exception>
         public void EndEdit()
         {
             if (!this.isInEditMode)
@@ -175,14 +179,14 @@ namespace IX.Undoable
 
             if (this.stateChanges.Count > 0)
             {
-                CommitEditInternal(this.stateChanges.ToArray());
+                this.CommitEditInternal(this.stateChanges.ToArray());
 
                 this.stateChanges.Clear();
             }
 
             this.isInEditMode = false;
 
-            RaisePropertyChanged(nameof(IsInEditMode));
+            this.RaisePropertyChanged(nameof(this.IsInEditMode));
         }
 
         /// <summary>
@@ -214,7 +218,7 @@ namespace IX.Undoable
             this.undoStack.Clear();
             this.redoStack.Clear();
 
-            RaisePropertyChanged(nameof(IsCapturedInUndoContext));
+            this.RaisePropertyChanged(nameof(this.IsCapturedInUndoContext));
         }
 
         /// <summary>
@@ -230,7 +234,7 @@ namespace IX.Undoable
 
             this.parentContext = null;
 
-            RaisePropertyChanged(nameof(IsCapturedInUndoContext));
+            this.RaisePropertyChanged(nameof(this.IsCapturedInUndoContext));
         }
 
         /// <summary>
@@ -251,7 +255,6 @@ namespace IX.Undoable
             }
 
             // We are not captured, let's proceed with Undo.
-
             if (this.undoStack.Count == 0)
             {
                 // We don't have anything to Undo.
@@ -260,10 +263,10 @@ namespace IX.Undoable
 
             StateChange[] undoData = this.undoStack.Pop();
             this.redoStack.Push(undoData);
-            RevertChanges(undoData);
+            this.RevertChanges(undoData);
 
-            RaisePropertyChanged(nameof(CanUndo));
-            RaisePropertyChanged(nameof(CanRedo));
+            this.RaisePropertyChanged(nameof(this.CanUndo));
+            this.RaisePropertyChanged(nameof(this.CanRedo));
         }
 
         /// <summary>
@@ -284,7 +287,6 @@ namespace IX.Undoable
             }
 
             // We are not captured, let's proceed with Redo.
-
             if (this.redoStack.Count == 0)
             {
                 // We don't have anything to Redo.
@@ -293,10 +295,52 @@ namespace IX.Undoable
 
             StateChange[] redoData = this.redoStack.Pop();
             this.undoStack.Push(redoData);
-            DoChanges(redoData);
+            this.DoChanges(redoData);
 
-            RaisePropertyChanged(nameof(CanUndo));
-            RaisePropertyChanged(nameof(CanRedo));
+            this.RaisePropertyChanged(nameof(this.CanUndo));
+            this.RaisePropertyChanged(nameof(this.CanRedo));
+        }
+
+        /// <summary>
+        /// Has the state changes received undone from the object.
+        /// </summary>
+        /// <param name="stateChanges">The state changes to undo.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="stateChanges"/> is <c>null</c> (<c>Nothing</c> in Visual Basic).</exception>
+        /// <exception cref="ItemNotCapturedIntoUndoContextException">The item is not captured into an undo/redo context, and this operation is illegal.</exception>
+        public void UndoStateChanges(StateChange[] stateChanges)
+        {
+            if (stateChanges == null)
+            {
+                throw new ArgumentNullException(nameof(stateChanges));
+            }
+
+            if (!this.IsCapturedInUndoContext)
+            {
+                throw new ItemNotCapturedIntoUndoContextException();
+            }
+
+            this.RevertChanges(stateChanges);
+        }
+
+        /// <summary>
+        /// Has the state changes received redone into the object.
+        /// </summary>
+        /// <param name="stateChanges">The state changes to redo.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="stateChanges"/> is <c>null</c> (<c>Nothing</c> in Visual Basic).</exception>
+        /// <exception cref="ItemNotCapturedIntoUndoContextException">The item is not captured into an undo/redo context, and this operation is illegal.</exception>
+        public void RedoStateChanges(StateChange[] stateChanges)
+        {
+            if (stateChanges == null)
+            {
+                throw new ArgumentNullException(nameof(stateChanges));
+            }
+
+            if (!this.IsCapturedInUndoContext)
+            {
+                throw new ItemNotCapturedIntoUndoContextException();
+            }
+
+            this.DoChanges(stateChanges);
         }
 
         /// <summary>
@@ -341,18 +385,6 @@ namespace IX.Undoable
         }
 
         /// <summary>
-        /// Handles the EditCommitted event of the sub-item.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="EditCommittedEventArgs"/> instance containing the event data.</param>
-        private void Item_EditCommitted(object sender, EditCommittedEventArgs e)
-        {
-            this.stateChanges.Add(new SubItemStateChange { StateChanges = e.StateChanges, SubObject = sender });
-
-            this.CommitEditInternal(this.stateChanges.ToArray());
-        }
-
-        /// <summary>
         /// When implemented in a child class, raises the property changed event of <see cref="T:System.ComponentModel.INotifyPropertyChanged" />.
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
@@ -389,6 +421,18 @@ namespace IX.Undoable
         protected abstract void DoChanges(StateChange[] stateChanges);
 
         /// <summary>
+        /// Handles the EditCommitted event of the sub-item.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EditCommittedEventArgs"/> instance containing the event data.</param>
+        private void Item_EditCommitted(object sender, EditCommittedEventArgs e)
+        {
+            this.stateChanges.Add(new SubItemStateChange { StateChanges = e.StateChanges, SubObject = sender });
+
+            this.CommitEditInternal(this.stateChanges.ToArray());
+        }
+
+        /// <summary>
         /// Commits the edit internally.
         /// </summary>
         /// <param name="stateChanges">The state changes.</param>
@@ -401,52 +445,10 @@ namespace IX.Undoable
 
             this.redoStack.Clear();
 
-            RaisePropertyChanged(nameof(CanUndo));
-            RaisePropertyChanged(nameof(CanRedo));
+            this.RaisePropertyChanged(nameof(this.CanUndo));
+            this.RaisePropertyChanged(nameof(this.CanRedo));
 
-            EditCommitted?.Invoke(this, new EditCommittedEventArgs(stateChanges));
-        }
-
-        /// <summary>
-        /// Has the state changes received undone from the object.
-        /// </summary>
-        /// <param name="stateChanges">The state changes to undo.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="stateChanges"/> is <c>null</c> (<c>Nothing</c> in Visual Basic).</exception>
-        /// <exception cref="ItemNotCapturedIntoUndoContextException">The item is not captured into an undo/redo context, and this operation is illegal.</exception>
-        public void UndoStateChanges(StateChange[] stateChanges)
-        {
-            if (stateChanges == null)
-            {
-                throw new ArgumentNullException(nameof(stateChanges));
-            }
-
-            if (!this.IsCapturedInUndoContext)
-            {
-                throw new ItemNotCapturedIntoUndoContextException();
-            }
-
-            this.RevertChanges(stateChanges);
-        }
-
-        /// <summary>
-        /// Has the state changes received redone into the object.
-        /// </summary>
-        /// <param name="stateChanges">The state changes to redo.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="stateChanges"/> is <c>null</c> (<c>Nothing</c> in Visual Basic).</exception>
-        /// <exception cref="ItemNotCapturedIntoUndoContextException">The item is not captured into an undo/redo context, and this operation is illegal.</exception>
-        public void RedoStateChanges(StateChange[] stateChanges)
-        {
-            if (stateChanges == null)
-            {
-                throw new ArgumentNullException(nameof(stateChanges));
-            }
-
-            if (!this.IsCapturedInUndoContext)
-            {
-                throw new ItemNotCapturedIntoUndoContextException();
-            }
-
-            this.DoChanges(stateChanges);
+            this.EditCommitted?.Invoke(this, new EditCommittedEventArgs(stateChanges));
         }
     }
 }

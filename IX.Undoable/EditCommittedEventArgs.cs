@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="EditCommittedEventArgs.cs" company="Adrian Mos">
+// Copyright (c) Adrian Mos with all rights reserved.
+// </copyright>
+
+using System;
 
 namespace IX.Undoable
 {
@@ -17,7 +21,7 @@ namespace IX.Undoable
         }
 
         /// <summary>
-        /// The state changes that have been committed.
+        /// Gets the state changes that have been committed.
         /// </summary>
         public StateChange[] StateChanges { get; private set; }
     }

@@ -27,6 +27,13 @@
     <DefineConstants>RELEASE</DefineConstants>
     <DocumentationFile>bin\Release\netstandard1.0\IX.Undoable.WPF.xml</DocumentationFile>
   </PropertyGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="..\IX.Undoable\stylecop.json" Link="stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta001" Type="build" PrivateAssets="all" />
+  </ItemGroup>
 
   <ItemGroup>
     <DotNetCliToolReference Include="dotnet-csprojVersioning" Version="1.0.0" />

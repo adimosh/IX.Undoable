@@ -1,10 +1,37 @@
-﻿namespace IX.Undoable
+﻿// <copyright file="IUndoableItem.cs" company="Adrian Mos">
+// Copyright (c) Adrian Mos with all rights reserved.
+// </copyright>
+
+namespace IX.Undoable
 {
     /// <summary>
     /// A service contract for an item that supports undo and redo operations.
     /// </summary>
     public interface IUndoableItem
     {
+        /// <summary>
+        /// Gets or sets the number of levels to keep undo or redo information.
+        /// </summary>
+        /// <remarks>
+        /// <para>If this value is set, for example, to 7, then the implementing object should allow the <see cref="Undo" /> method
+        /// to be called 7 times to change the state of the object. Upon calling it an 8th time, there should be no change in the
+        /// state of the object.</para>
+        /// <para>Any call beyond the limit imposed here should not fail, but it should also not change the state of the object.</para>
+        /// </remarks>
+        int HistoryLevels { get; set; }
+
+        /// <summary>
+        /// Gets a value indicating whether or not the implementer can perform an undo.
+        /// </summary>
+        /// <value><c>true</c> if the call to the <see cref="Undo"/> method would result in a state change, <c>false</c> otherwise.</value>
+        bool CanUndo { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether or not the implementer can perform a redo.
+        /// </summary>
+        /// <value><c>true</c> if the call to the <see cref="Redo"/> method would result in a state change, <c>false</c> otherwise.</value>
+        bool CanRedo { get; }
+
         /// <summary>
         /// Has the last operation performed on the implementing instance undone.
         /// </summary>
@@ -60,28 +87,5 @@
         /// Releases the implementer from being captured into an undo and redo context.
         /// </summary>
         void ReleaseFromUndoContext();
-
-        /// <summary>
-        /// The number of levels to keep undo or redo information.
-        /// </summary>
-        /// <remarks>
-        /// <para>If this value is set, for example, to 7, then the implementing object should allow the <see cref="Undo" /> method
-        /// to be called 7 times to change the state of the object. Upon calling it an 8th time, there should be no change in the
-        /// state of the object.</para>
-        /// <para>Any call beyond the limit imposed here should not fail, but it should also not change the state of the object.</para>
-        /// </remarks>
-        int HistoryLevels { get; set; }
-
-        /// <summary>
-        /// Gets whether or not the implementer can perform an undo.
-        /// </summary>
-        /// <value><c>true</c> if the call to the <see cref="Undo"/> method would result in a state change, <c>false</c> otherwise.</value>
-        bool CanUndo { get; }
-
-        /// <summary>
-        /// Gets whether or not the implementer can perform a redo.
-        /// </summary>
-        /// <value><c>true</c> if the call to the <see cref="Redo"/> method would result in a state change, <c>false</c> otherwise.</value>
-        bool CanRedo { get; }
     }
 }

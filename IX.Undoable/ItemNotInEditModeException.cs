@@ -1,4 +1,8 @@
-﻿using System;
+﻿// <copyright file="ItemNotInEditModeException.cs" company="Adrian Mos">
+// Copyright (c) Adrian Mos with all rights reserved.
+// </copyright>
+
+using System;
 
 namespace IX.Undoable
 {
@@ -14,7 +18,8 @@ namespace IX.Undoable
         /// </summary>
         public ItemNotInEditModeException()
             : base(Resources.ItemNotInEditModeExceptionDefaultMessage)
-        { }
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ItemNotInEditModeException"/> class.
@@ -22,7 +27,8 @@ namespace IX.Undoable
         /// <param name="message">The custom message to display.</param>
         public ItemNotInEditModeException(string message)
             : base(message)
-        { }
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ItemNotInEditModeException"/> class.
@@ -30,7 +36,8 @@ namespace IX.Undoable
         /// <param name="innerException">The inner exception that caused this exception.</param>
         public ItemNotInEditModeException(Exception innerException)
             : base(Resources.ItemNotInEditModeExceptionDefaultMessage, innerException)
-        { }
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ItemNotInEditModeException"/> class.
@@ -39,6 +46,7 @@ namespace IX.Undoable
         /// <param name="innerException">The inner exception that caused this exception.</param>
         public ItemNotInEditModeException(string message, Exception innerException)
             : base(message, innerException)
-        { }
+        {
+        }
     }
 }
