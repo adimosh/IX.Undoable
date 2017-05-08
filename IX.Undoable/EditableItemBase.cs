@@ -353,7 +353,7 @@ namespace IX.Undoable
         /// capabilities and are also transactional in nature when being edited. Using this method on any other object may yield unwanted
         /// commits.</remarks>
         protected void CaptureSubItemIntoPresentContext<TSubItem>(TSubItem item)
-            where TSubItem : IUndoableItem, ITransactionEditableItem
+            where TSubItem : IUndoableItem, IEditCommittableItem
         {
             if (item == null)
             {
@@ -372,7 +372,7 @@ namespace IX.Undoable
         /// <param name="item">The item.</param>
         /// <exception cref="ArgumentNullException">item</exception>
         protected void ReleaseSubItemFromPresentContext<TSubItem>(TSubItem item)
-            where TSubItem : IUndoableItem, ITransactionEditableItem
+            where TSubItem : IUndoableItem, IEditCommittableItem
         {
             if (item == null)
             {
