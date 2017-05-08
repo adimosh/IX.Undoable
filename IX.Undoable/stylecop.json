@@ -9,16 +9,16 @@
       "documentInterfaces": true,
       "documentInternalElements": false,
       "documentPrivateFields": false,
-	  "xmlHeader": true
+    "xmlHeader": true
     },
     "orderingRules": {
       "systemUsingDirectivesFirst": true,
       "usingDirectivesPlacement": "outsideNamespace",
       "elementOrder": [ "kind", "constant", "readonly", "static", "accessibility" ]
     },
-	"maintainabilityRules": {
-	  "topLevelTypes": [ "class", "struct", "interface" ]
-	},
+  "maintainabilityRules": {
+    "topLevelTypes": [ "class", "struct", "interface" ]
+  },
     "namingRules": {
       "allowCommonHungarianPrefixes": false
     },
