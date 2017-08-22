@@ -22,13 +22,12 @@
     <DocumentationFile>bin\Debug\netstandard1.0\IX.Undoable.WPF.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <WarningsAsErrors>true</WarningsAsErrors>
     <DefineConstants>RELEASE</DefineConstants>
     <DocumentationFile>bin\Release\netstandard1.0\IX.Undoable.WPF.xml</DocumentationFile>
   </PropertyGroup>
+
   <ItemGroup>
-    <AdditionalFiles Include="..\IX.Undoable\stylecop.json" Link="stylecop.json" />
+    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
 
   <ItemGroup>

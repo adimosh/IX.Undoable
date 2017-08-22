@@ -3,6 +3,7 @@
 // </copyright>
 
 using System;
+using IX.StandardExtensions.ComponentModel;
 using IX.System.Collections.Generic;
 
 namespace IX.Undoable
@@ -12,7 +13,7 @@ namespace IX.Undoable
     /// </summary>
     /// <seealso cref="IX.Undoable.ITransactionEditableItem" />
     /// <seealso cref="IX.Undoable.IUndoableItem" />
-    public abstract class EditableItemBase : ITransactionEditableItem, IUndoableItem
+    public abstract class EditableItemBase : ViewModelBase, ITransactionEditableItem, IUndoableItem
     {
         /// <summary>
         /// The value indicating whether the item is in edit mode
@@ -382,14 +383,6 @@ namespace IX.Undoable
             item.EditCommitted -= this.Item_EditCommitted;
 
             item.ReleaseFromUndoContext();
-        }
-
-        /// <summary>
-        /// When implemented in a child class, raises the property changed event of <see cref="T:System.ComponentModel.INotifyPropertyChanged" />.
-        /// </summary>
-        /// <param name="propertyName">Name of the property.</param>
-        protected virtual void RaisePropertyChanged(string propertyName)
-        {
         }
 
         /// <summary>
