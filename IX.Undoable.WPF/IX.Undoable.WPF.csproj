@@ -12,10 +12,12 @@
     <Authors>Adrian Mos</Authors>
     <Company />
     <Product>IX Framework</Product>
+    <Title>IX Undoable for WPF</Title>
     <Description>A library for a standard undo/redo implementation for WPF.</Description>
     <Copyright>Adrian Mos, 2017</Copyright>
     <PackageProjectUrl>https://github.com/adimosh/IX.Undoable/</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/adimosh/IX.Undoable/blob/master/LICENSE.md</PackageLicenseUrl>
+    <NeutralLanguage>en</NeutralLanguage>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

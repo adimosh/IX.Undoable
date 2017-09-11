@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net45;netstandard1.1;netstandard2.0</TargetFrameworks>
     <Version>0.1.0.1</Version>
     <FileVersion>0.1.0.1</FileVersion>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -12,10 +12,16 @@
     <Authors>Adrian Mos</Authors>
     <Company />
     <Product>IX Framework</Product>
+    <Title>IX Undoable</Title>
     <Description>A library for a standard undo/redo implementation.</Description>
     <Copyright>Adrian Mos, 2017</Copyright>
     <PackageProjectUrl>https://github.com/adimosh/IX.Undoable/</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/adimosh/IX.Undoable/blob/master/LICENSE.md</PackageLicenseUrl>
+    <NeutralLanguage>en</NeutralLanguage>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)'=='net45'">
+    <DefineConstants>NET45</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard1.1'">
@@ -24,6 +30,14 @@
 
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
     <DefineConstants>NETSTANDARD2_0</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net45'">
+    <DocumentationFile>bin\Debug\net45\IX.Undoable.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net45'">
+    <DocumentationFile>bin\Release\net45\IX.Undoable.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netstandard1.1'">
@@ -51,11 +65,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="IX.Abstractions.Collections" Version="0.1.3.3" />
-    <PackageReference Include="IX.StandardExtensions" Version="0.1.0.26" />
-    <PackageReference Include="IX.StandardExtensions.ComponentModel" Version="0.1.0.26" />
+    <PackageReference Include="IX.Abstractions.Collections" Version="0.1.4.4" />
+    <PackageReference Include="IX.StandardExtensions" Version="0.1.1.29" />
+    <PackageReference Include="IX.StandardExtensions.ComponentModel" Version="0.1.1.29" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)'!='net45'">
     <PackageReference Include="System.Collections" Version="4.3.0" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta001" Type="build" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta004" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
