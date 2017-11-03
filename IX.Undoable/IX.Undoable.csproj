@@ -65,9 +65,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="IX.Abstractions.Collections" Version="0.1.4.4" />
-    <PackageReference Include="IX.StandardExtensions" Version="0.1.1.30" />
-    <PackageReference Include="IX.StandardExtensions.ComponentModel" Version="0.1.1.30" />
+    <PackageReference Include="IX.Abstractions.Collections" Version="0.1.4.8" />
+    <PackageReference Include="IX.StandardExtensions" Version="0.1.1.35" />
+    <PackageReference Include="IX.StandardExtensions.ComponentModel" Version="0.1.1.35" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'!='net45'">
